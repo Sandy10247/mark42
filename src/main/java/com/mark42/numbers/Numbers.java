@@ -29,4 +29,22 @@ public class Numbers {
         return res.reverse().toString();
     }
 
+    @ShellMethod(key = "sum-all-digits", value = "Create a Sum of All Digits")
+    public String sumOfAllDigits(@ShellOption(
+            value = {"--n"},
+            defaultValue = "0") String arg) {
+        // Validate String whether it's a Integer or Not
+        if (!NumberUtils.isInteger(arg)) {
+            return "Enter an Integer Idiot 🥱";
+        }
+        int num = Integer.parseInt(arg, 10);
+        int res = 0;
+        while (num > 0) {
+            res += num % 10;
+            num /= 10;
+        }
+
+        return String.valueOf(res);
+    }
+
 }
