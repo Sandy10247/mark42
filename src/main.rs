@@ -1,9 +1,5 @@
 use std::cmp::Ordering;
-use std::collections::HashMap;
 use std::io::stdin;
-
-// Types
-type ExecuteFn = fn() -> ();
 
 // Utils
 fn reverse_string(curr: String) -> String {
@@ -11,6 +7,26 @@ fn reverse_string(curr: String) -> String {
 }
 
 // Ops
+
+fn get_sorted_list(l: Vec<usize>) -> Vec<usize> {
+    let mut list = l.clone();
+    list.sort_by(|a, b| b.cmp(a));
+    list
+}
+
+fn get_1s_compliment(num: usize) -> String {
+    get_binary(num as i32)
+        .chars()
+        .fold(String::new(), |acc, curr| {
+            return acc + if curr == '0' { "1" } else { "0" };
+        })
+}
+fn get_2s_compliment(num: usize) -> String {
+    let mut ones_compliment = get_1s_compliment(num);
+    println!("ones compliment :- {ones_compliment}");
+    let last = ones_compliment.pop().unwrap();
+    ones_compliment + if last == '0' { "1" } else { "0" }
+}
 
 fn get_largest(list: Vec<usize>) -> usize {
     *list
@@ -143,18 +159,16 @@ fn binary_to_decimal() {
     println!("result :- {}", result);
 }
 
-fn decimal_to_binary() {
-    println!("Decimal to Binary OP : ");
-    println!("Enter an Integer :- ");
-    let mut num = read_number();
+fn get_binary(n: i32) -> String {
     let mut result = String::from("");
+    let mut num = n;
 
     while num > 0 {
         result.push_str((num % 2).to_string().as_str());
         num = num / 2;
     }
 
-    println!("Result :- {}", reverse_string(result));
+    reverse_string(result)
 }
 
 fn read_string() -> String {
@@ -177,27 +191,7 @@ fn read_number() -> i32 {
     user_input.trim().parse().expect("Failed to read a Number")
 }
 
-fn main() {
-    println!(":::::::::::::::::: KSPK's Programmes :::::::::::::::::::::::::");
-    println!("1. Decimal to Binary");
-    println!("2. Binary to Decimal");
-    println!("3. Check for Palindrome");
-    println!("4. Delete String chars");
-    println!("5. Linear Search");
-
-    let mut op_fn_map: HashMap<String, ExecuteFn> = HashMap::new();
-
-    op_fn_map.insert(String::from("1"), decimal_to_binary);
-    op_fn_map.insert(String::from("2"), binary_to_decimal);
-    op_fn_map.insert(String::from("3"), check_for_palindrome);
-    op_fn_map.insert(String::from("4"), delete_string_chars);
-    op_fn_map.insert(String::from("5"), linear_search);
-
-    let user_input = read_number();
-    let execute = op_fn_map.get(&user_input.to_string()).unwrap();
-
-    execute();
-}
+fn main() {}
 
 #[cfg(test)]
 mod tests {
@@ -236,7 +230,22 @@ mod tests {
 
     #[test]
     fn test_get_largest() {
-        assert_eq!(get_largest(vec![12, 20, 30, 22, 200, 100, 10, 2]), 1200);
+        assert_eq!(get_largest(vec![12, 20, 30, 22, 200, 100, 10, 2]), 200);
+    }
+
+    #[test]
+    fn test_get_1s_compliment() {
+        assert_eq!(get_1s_compliment(10), "0101");
+    }
+
+    #[test]
+    fn test_get_2s_compliment() {
+        assert_eq!(get_2s_compliment(10), "0100");
+    }
+
+    #[test]
+    fn test_get_sorted_list() {
+        assert_eq!(get_sorted_list(vec![0, 1, 20, 4]), vec![20, 4, 1, 0]);
     }
     // #[test]
     // fn test_bad_add() {
