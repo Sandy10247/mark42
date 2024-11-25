@@ -12,6 +12,15 @@ fn reverse_string(curr: String) -> String {
 
 // Ops
 
+fn get_largest(list: Vec<usize>) -> usize {
+    *list
+        .iter()
+        .max_by(|a, b| {
+            return a.partial_cmp(b).unwrap();
+        })
+        .unwrap()
+}
+
 fn gen_primes(start: usize, count: usize) -> Vec<usize> {
     let mut primes_found: Vec<usize> = vec![];
     let mut start_iter = start;
@@ -225,6 +234,10 @@ mod tests {
         )
     }
 
+    #[test]
+    fn test_get_largest() {
+        assert_eq!(get_largest(vec![12, 20, 30, 22, 200, 100, 10, 2]), 1200);
+    }
     // #[test]
     // fn test_bad_add() {
     //     // This assert would fire and test will fail.
