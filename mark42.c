@@ -161,7 +161,7 @@ if (l==18)
 	  }
 	  void funall ()/*keys to all programmes*/
 {
-	printf("\n::::::::kspk's programmes::::::::\n");
+		printf("\n::::::::kspk's programmes::::::::\n");
 	printf("\ndecimal to binary\n"
 	            "binary to decimal\n"
     	        "pallindrome\n" 
