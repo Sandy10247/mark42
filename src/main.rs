@@ -12,6 +12,54 @@ fn reverse_string(curr: String) -> String {
 
 // Ops
 
+fn gen_primes(start: usize, count: usize) -> Vec<usize> {
+    let mut primes_found: Vec<usize> = vec![];
+    let mut start_iter = start;
+
+    fn is_prime(num: usize) -> bool {
+        let num_sqrt = (num as f64).sqrt() as usize;
+        for el in 2..=num_sqrt {
+            if num % el == 0 {
+                return false;
+            }
+        }
+
+        true
+    }
+    while primes_found.len() < count {
+        if is_prime(start_iter) {
+            primes_found.push(start_iter);
+        }
+        start_iter += 1;
+    }
+
+    primes_found
+}
+
+fn binary_search<T: std::cmp::Ord + std::fmt::Display>(
+    list: &[T],
+    search_term: T,
+) -> Option<usize> {
+    let length: usize = list.len();
+    let mut mid = length / 2;
+    let mut high = length - 1;
+    let mut low = 0;
+    let mut curr = &list[mid];
+
+    while low <= high {
+        match curr.cmp(&search_term) {
+            Ordering::Equal => return Some(mid),
+            Ordering::Greater => low = mid + 1,
+            Ordering::Less => high = mid - 1,
+        }
+
+        mid = (low + high) / 2;
+        curr = &list[mid];
+    }
+
+    None
+}
+
 fn linear_search() {
     println!("Linear Search : 🔍");
     println!("Enter text :- ");
@@ -140,4 +188,47 @@ fn main() {
     let execute = op_fn_map.get(&user_input.to_string()).unwrap();
 
     execute();
+}
+
+#[cfg(test)]
+mod tests {
+    // Note this useful idiom: importing names from outer (for mod tests) scope.
+    use super::*;
+
+    #[test]
+    fn test_binary_search_ints() {
+        assert_eq!(binary_search(&vec![1, 2, 3, 4, 5], 3), Some(2));
+    }
+
+    #[test]
+    fn test_primes_generate() {
+        assert_eq!(gen_primes(2, 4), vec![2, 3, 5, 7])
+    }
+
+    #[test]
+    fn test_primes_generate_max() {
+        assert_eq!(
+            gen_primes(2, 168),
+            vec![
+                2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79,
+                83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167,
+                173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251, 257,
+                263, 269, 271, 277, 281, 283, 293, 307, 311, 313, 317, 331, 337, 347, 349, 353,
+                359, 367, 373, 379, 383, 389, 397, 401, 409, 419, 421, 431, 433, 439, 443, 449,
+                457, 461, 463, 467, 479, 487, 491, 499, 503, 509, 521, 523, 541, 547, 557, 563,
+                569, 571, 577, 587, 593, 599, 601, 607, 613, 617, 619, 631, 641, 643, 647, 653,
+                659, 661, 673, 677, 683, 691, 701, 709, 719, 727, 733, 739, 743, 751, 757, 761,
+                769, 773, 787, 797, 809, 811, 821, 823, 827, 829, 839, 853, 857, 859, 863, 877,
+                881, 883, 887, 907, 911, 919, 929, 937, 941, 947, 953, 967, 971, 977, 983, 991,
+                997
+            ]
+        )
+    }
+
+    // #[test]
+    // fn test_bad_add() {
+    //     // This assert would fire and test will fail.
+    //     // Please note, that private functions can be tested too!
+    //     assert_eq!(bad_add(1, 2), 3);
+    // }
 }
