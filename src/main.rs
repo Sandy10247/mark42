@@ -85,65 +85,31 @@ fn binary_search<T: std::cmp::Ord + std::fmt::Display>(
     None
 }
 
-fn linear_search() {
-    println!("Linear Search : 🔍");
-    println!("Enter text :- ");
-    let user_input = read_string();
-
-    println!("Enter Search Item :- ");
-    let search_item = read_string();
-
-    match user_input
-        .split(" ")
-        .map(|x| x.to_string())
-        .find(|x| *x == search_item)
-    {
-        Some(_) => println!("Found :- {search_item:?}"),
-        None => println!("Not Found"),
-    };
+fn linear_search<T: std::cmp::Ord + std::fmt::Display>(list: &[T], search_term: T) -> Option<&T> {
+    list.iter().find(|&x| *x == search_term)
 }
 
-fn delete_string_chars() {
-    println!("Check for Palindrome : ");
-    println!("Enter text :- ");
-    let user_input = read_string();
-
-    println!("Enter postion :- ");
-    let user_desired_pos = read_number();
-
-    println!("Enter delete count :- ");
-    let delete_count = read_number();
-
+fn delete_string_chars(curr_string: String, start: usize, count: usize) -> String {
     let mut res_string = String::new();
-
-    for (i, item) in user_input.chars().enumerate() {
-        if i < user_desired_pos as usize || i > (user_desired_pos as usize + delete_count as usize)
-        {
+    for (i, item) in curr_string.chars().enumerate() {
+        if i < start as usize || i > (start as usize + count as usize) {
             res_string.push_str(item.to_string().as_str());
         }
     }
-
-    println!("Result String :- {res_string}");
+    res_string
 }
 
-fn check_for_palindrome() {
-    println!("Check for Palindrome : ");
-    println!("Enter text :- ");
-    let user_input = read_string();
-    let reverded = reverse_string(user_input.trim().to_string());
-    match user_input.trim().cmp(&reverded) {
-        Ordering::Less => println!("Not Pallindrome"),
-        Ordering::Greater => println!("Not Pallindrome"),
-        Ordering::Equal => {
-            println!("Pallindrome");
-        }
+fn is_pallindrome(curr_str: String) -> bool {
+    let reverded = reverse_string(curr_str.trim().to_string());
+    match curr_str.trim().cmp(&reverded) {
+        Ordering::Less => false,
+        Ordering::Greater => false,
+        Ordering::Equal => true,
     }
 }
 
-fn binary_to_decimal() {
-    println!("Decimal to Binary OP : ");
-    println!("Enter a Binary :- ");
-    let mut num: i32 = read_string()
+fn binary_to_decimal(num_str: String) -> i32 {
+    let mut num: i32 = num_str
         .trim()
         .parse()
         .expect("Failed to Read Binary to i32");
@@ -156,7 +122,7 @@ fn binary_to_decimal() {
         num /= 10;
     }
 
-    println!("result :- {}", result);
+    result
 }
 
 fn get_binary(n: i32) -> String {
@@ -197,6 +163,39 @@ fn main() {}
 mod tests {
     // Note this useful idiom: importing names from outer (for mod tests) scope.
     use super::*;
+
+    #[test]
+    fn test_linear_search() {
+        assert_eq!(linear_search(&vec![1, 10, 230, 20, -1, 30], -1), Some(&-1));
+    }
+
+    #[test]
+    fn test_linear_search_fail() {
+        assert_eq!(linear_search(&vec![1, 10, 230, 20, -1, 30], 1001), None);
+    }
+
+    #[test]
+    fn test_delete_string_chars() {
+        assert_eq!(
+            delete_string_chars("Hello World".to_string(), 2, 2),
+            "He World"
+        );
+    }
+
+    #[test]
+    fn test_is_pallindrome() {
+        assert_eq!(is_pallindrome("abba".to_string()), true);
+    }
+
+    #[test]
+    fn test_binary_to_decimal() {
+        assert_eq!(binary_to_decimal("1010".to_string()), 10);
+    }
+
+    #[test]
+    fn test_get_test() {
+        assert_eq!(get_binary(10), "1010");
+    }
 
     #[test]
     fn test_binary_search_ints() {
@@ -247,10 +246,4 @@ mod tests {
     fn test_get_sorted_list() {
         assert_eq!(get_sorted_list(vec![0, 1, 20, 4]), vec![20, 4, 1, 0]);
     }
-    // #[test]
-    // fn test_bad_add() {
-    //     // This assert would fire and test will fail.
-    //     // Please note, that private functions can be tested too!
-    //     assert_eq!(bad_add(1, 2), 3);
-    // }
 }
