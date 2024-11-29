@@ -1,12 +1,141 @@
 use std::cmp::Ordering;
 use std::io::stdin;
 
-// Utils
+type Matrix = Vec<Vec<i32>>;
+
+// #region Utils
 fn reverse_string(curr: String) -> String {
-    curr.chars().rev().collect::<String>()
+    let mut rev_split = curr.split("").map(String::from).collect::<Vec<String>>();
+    rev_split.reverse();
+    return rev_split.join("");
+}
+fn print_mat(mat: &Matrix) {
+    for i in 0..mat.len() {
+        for j in 0..mat[i].len() {
+            print!("{} ", mat[i][j])
+        }
+        println!();
+    }
 }
 
+fn fill_mat(source_matrix: &Matrix) -> Matrix {
+    let mut result_matrix: Matrix = vec![];
+    for i in 0..source_matrix.len() {
+        let mut col_vector = vec![];
+        for j in 0..source_matrix[i].len() {
+            col_vector.push(0);
+        }
+        result_matrix.push(col_vector);
+    }
+    result_matrix
+}
+// #endregion
+
 // Ops
+
+fn get_sum_mul_of_digits(num: i32) -> (i32, i32) {
+    let mut n = num;
+    let mut sum = 0;
+    let mut mul = 1;
+    while (n > 0) {
+        let last_digit = n % 10;
+        sum += last_digit;
+        mul *= last_digit;
+        n /= 10;
+    }
+
+    (sum, mul)
+}
+
+fn get_trace_of_matrix(m1: &Matrix) -> i32 {
+    let mut trace = 0;
+    for i in 0..m1.len() {
+        for j in 0..m1[i].len() {
+            if i == j {
+                trace += m1[i][j];
+            }
+        }
+    }
+    trace
+}
+
+fn get_matrix_transpose(m1: &Matrix) -> Matrix {
+    let mut res_matrix = fill_mat(m1);
+
+    for i in 0..m1.len() {
+        for j in 0..m1[i].len() {
+            res_matrix[j][i] = m1[i][j];
+        }
+    }
+
+    res_matrix
+}
+
+fn check_matrix_symmetric(m1: &Matrix, m2: &Matrix) -> bool {
+    for i in 0..m1.len() {
+        for j in 0..m1[i].len() {
+            if m1[i][j] != m2[i][j] {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+fn get_fib_series(count: usize) -> Vec<i32> {
+    fn fib(a: usize) -> i32 {
+        if a < 2 {
+            return a as i32;
+        }
+
+        return fib(a - 1) + fib(a - 2);
+    }
+
+    let mut res_vec = vec![];
+    for i in 1..=count {
+        res_vec.push(fib(i));
+    }
+
+    res_vec
+}
+
+fn get_reverse_string(source_str: String) -> String {
+    reverse_string(source_str)
+}
+
+fn get_min_max_vec(arr: Vec<i32>) -> (i32, i32) {
+    arr.iter().fold((arr[0], arr[0]), |mut acc, curr| {
+        if *curr < acc.0 {
+            acc.0 = *curr
+        }
+
+        if *curr > acc.1 {
+            acc.1 = *curr
+        }
+        return acc;
+    })
+}
+
+fn get_upper_triangle_matrix(mut source_matrix: &Matrix) -> Matrix {
+    let mut result_matrix: Matrix = fill_mat(source_matrix);
+    for i in 0..source_matrix.len() {
+        for j in 0..source_matrix[i].len() {
+            result_matrix[i][j] = if i >= j { source_matrix[i][j] } else { 0 }
+        }
+    }
+    result_matrix
+}
+
+fn get_lower_triangle_matrix(mut source_matrix: &Matrix) -> Matrix {
+    let mut result_matrix: Matrix = fill_mat(source_matrix);
+    for i in 0..source_matrix.len() {
+        for j in 0..source_matrix[i].len() {
+            result_matrix[i][j] = if i <= j { source_matrix[i][j] } else { 0 }
+        }
+    }
+    result_matrix
+}
 
 fn get_sorted_list(l: Vec<usize>) -> Vec<usize> {
     let mut list = l.clone();
@@ -161,6 +290,8 @@ fn main() {}
 
 #[cfg(test)]
 mod tests {
+    use std::vec;
+
     // Note this useful idiom: importing names from outer (for mod tests) scope.
     use super::*;
 
@@ -245,5 +376,95 @@ mod tests {
     #[test]
     fn test_get_sorted_list() {
         assert_eq!(get_sorted_list(vec![0, 1, 20, 4]), vec![20, 4, 1, 0]);
+    }
+
+    #[test]
+    fn test_get_lower_triangle_matrix() {
+        assert_eq!(
+            get_lower_triangle_matrix(&vec![
+                vec![1, 2, 3, 4],
+                vec![5, 6, 7, 8],
+                vec![9, 10, 11, 12],
+                vec![13, 14, 15, 16],
+            ]),
+            vec![
+                vec![1, 2, 3, 4],
+                vec![0, 6, 7, 8],
+                vec![0, 0, 11, 12],
+                vec![0, 0, 0, 16],
+            ]
+        );
+    }
+
+    #[test]
+    fn test_get_upper_triangle_matrix() {
+        assert_eq!(
+            get_upper_triangle_matrix(&vec![
+                vec![1, 2, 3, 4],
+                vec![5, 6, 7, 8],
+                vec![9, 10, 11, 12],
+                vec![13, 14, 15, 16],
+            ]),
+            vec![
+                vec![1, 0, 0, 0],
+                vec![5, 6, 0, 0],
+                vec![9, 10, 11, 0],
+                vec![13, 14, 15, 16],
+            ]
+        );
+    }
+
+    #[test]
+    fn test_get_min_max() {
+        assert_eq!(
+            get_min_max_vec(vec![20, 10, 1, 20, 30, -1, 20, 200]),
+            (-1, 200)
+        )
+    }
+
+    #[test]
+    fn test_rev_string() {
+        assert_eq!(
+            get_reverse_string(String::from("1234 💔🥶🤠")),
+            String::from("🤠🥶💔 4321")
+        );
+    }
+
+    #[test]
+    fn test_get_fib_series() {
+        assert_eq!(get_fib_series(4), vec![1, 1, 2, 3]);
+    }
+
+    #[test]
+    fn test_check_matrix_symmetric() {
+        assert_eq!(
+            check_matrix_symmetric(
+                &vec![vec![1, 2, 3], vec![1, 2, 3], vec![1, 2, 3]],
+                &vec![vec![1, 2, 3], vec![1, 2, 3], vec![1, 2, 3]]
+            ),
+            true
+        );
+    }
+
+    #[test]
+    fn test_get_matrix_transpose() {
+        //  [[1, 4, 7], [2, 5, 8], [3, 6, 9]]
+        assert_eq!(
+            get_matrix_transpose(&vec![vec![1, 2, 3], vec![4, 5, 6], vec![7, 8, 9]]),
+            vec![vec![1, 4, 7], vec![2, 5, 8], vec![3, 6, 9]]
+        );
+    }
+
+    #[test]
+    fn test_get_trace_of_matrix() {
+        assert_eq!(
+            get_trace_of_matrix(&vec![vec![1, 2, 3], vec![4, 5, 6], vec![7, 8, 9]]),
+            15
+        );
+    }
+
+    #[test]
+    fn test_get_sum_mul_of_digits() {
+        assert_eq!(get_sum_mul_of_digits(1234), (10, 24));
     }
 }
